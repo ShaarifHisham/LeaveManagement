@@ -13,7 +13,7 @@ namespace LeaveTrack.Models
         public DateTime ToDate { get; set; }
         public int ApproverId { get; set; }
         public string Reason { get; set; }
-        public LeaveStatus Status { get; set; }
+        public virtual EmployeeLeaveStatus Status { get; set; }
         public bool IsDeleted { get; set; }
 
         public int? EmployeeId { get; set; }

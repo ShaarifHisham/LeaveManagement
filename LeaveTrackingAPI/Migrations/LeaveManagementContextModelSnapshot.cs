@@ -70,9 +70,8 @@ namespace LeaveTrack.Migrations
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
 
-                    b.Property<string>("Role")
-                        .HasMaxLength(15)
-                        .HasColumnType("nvarchar(15)");
+                    b.Property<int?>("RoleId")
+                        .HasColumnType("int");
 
                     b.Property<string>("UserName")
                         .IsRequired()
@@ -83,7 +82,35 @@ namespace LeaveTrack.Migrations
 
                     b.HasIndex("CompanyId");
 
+                    b.HasIndex("RoleId");
+
                     b.ToTable("Employees");
+                });
+
+            modelBuilder.Entity("LeaveTrack.Models.EmployeeLeaveStatus", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Code")
+                        .HasMaxLength(15)
+                        .HasColumnType("nvarchar(15)");
+
+                    b.Property<int>("EnumValue")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .HasMaxLength(15)
+                        .HasColumnType("nvarchar(15)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("EmployeeLeaveStatus");
                 });
 
             modelBuilder.Entity("LeaveTrack.Models.LeaveRequest", b =>
@@ -107,9 +134,10 @@ namespace LeaveTrack.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("Reason")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
 
-                    b.Property<int>("Status")
+                    b.Property<int?>("StatusId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("ToDate")
@@ -118,6 +146,8 @@ namespace LeaveTrack.Migrations
                     b.HasKey("LeaveReportId");
 
                     b.HasIndex("EmployeeId");
+
+                    b.HasIndex("StatusId");
 
                     b.ToTable("LeaveReports");
                 });
@@ -157,11 +187,41 @@ namespace LeaveTrack.Migrations
                     b.ToTable("Projects");
                 });
 
+            modelBuilder.Entity("LeaveTrack.Models.Role", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Code")
+                        .HasMaxLength(15)
+                        .HasColumnType("nvarchar(15)");
+
+                    b.Property<int>("EnumValue")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .HasMaxLength(15)
+                        .HasColumnType("nvarchar(15)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Role");
+                });
+
             modelBuilder.Entity("LeaveTrack.Models.Employee", b =>
                 {
                     b.HasOne("LeaveTrack.Models.Company", "Company")
                         .WithMany("Employees")
                         .HasForeignKey("CompanyId");
+
+                    b.HasOne("LeaveTrack.Models.Role", "Role")
+                        .WithMany()
+                        .HasForeignKey("RoleId");
                 });
 
             modelBuilder.Entity("LeaveTrack.Models.LeaveRequest", b =>
@@ -171,6 +231,10 @@ namespace LeaveTrack.Migrations
                         .HasForeignKey("EmployeeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("LeaveTrack.Models.EmployeeLeaveStatus", "Status")
+                        .WithMany()
+                        .HasForeignKey("StatusId");
                 });
 
             modelBuilder.Entity("LeaveTrack.Models.Project", b =>

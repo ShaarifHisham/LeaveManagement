@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace LeaveTrack.Migrations
 {
-    public partial class LeaveReportMigration : Migration
+    public partial class LeaveRequestMigration : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -22,6 +22,38 @@ namespace LeaveTrack.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "EmployeeLeaveStatus",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(nullable: false),
+                    Code = table.Column<string>(nullable: false),
+                    EnumValue = table.Column<int>(nullable: false),
+                    IsDeleted = table.Column<bool>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_EmployeeLeaveStatus", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Role",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(nullable: false),
+                    Code = table.Column<string>(nullable: false),
+                    EnumValue = table.Column<int>(nullable: false),
+                    IsDeleted = table.Column<bool>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Role", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Employees",
                 columns: table => new
                 {
@@ -30,7 +62,7 @@ namespace LeaveTrack.Migrations
                     FirstName = table.Column<string>(nullable: false),
                     LastName = table.Column<string>(nullable: false),
                     DateOfBirth = table.Column<DateTime>(nullable: false),
-                    Role = table.Column<string>(nullable: false),
+                    RoleId = table.Column<int>(nullable: false),
                     UserName = table.Column<string>(nullable: false),
                     Password = table.Column<string>(nullable: false),
                     IsDeleted = table.Column<bool>(nullable: false),
@@ -45,6 +77,12 @@ namespace LeaveTrack.Migrations
                         principalTable: "Companys",
                         principalColumn: "CompanyId",
                         onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Employees_Role_RoleId",
+                        column: x => x.RoleId,
+                        principalTable: "Role",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -57,7 +95,7 @@ namespace LeaveTrack.Migrations
                     ToDate = table.Column<DateTime>(nullable: false),
                     ApproverId = table.Column<int>(nullable: false),
                     Reason = table.Column<string>(nullable: true),
-                    Status = table.Column<int>(nullable: false),
+                    StatusId = table.Column<int>(nullable: false),
                     IsDeleted = table.Column<bool>(nullable: false),
                     EmployeeId = table.Column<int>(nullable: false)
                 },
@@ -70,6 +108,12 @@ namespace LeaveTrack.Migrations
                         principalTable: "Employees",
                         principalColumn: "EmployeeId",
                         onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_LeaveReports_EmployeeLeaveStatus_StatusId",
+                        column: x => x.StatusId,
+                        principalTable: "EmployeeLeaveStatus",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -108,9 +152,19 @@ namespace LeaveTrack.Migrations
                 column: "CompanyId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Employees_RoleId",
+                table: "Employees",
+                column: "RoleId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_LeaveReports_EmployeeId",
                 table: "LeaveReports",
                 column: "EmployeeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_LeaveReports_StatusId",
+                table: "LeaveReports",
+                column: "StatusId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Projects_CompanyId",
@@ -132,10 +186,16 @@ namespace LeaveTrack.Migrations
                 name: "Projects");
 
             migrationBuilder.DropTable(
+                name: "EmployeeLeaveStatus");
+
+            migrationBuilder.DropTable(
                 name: "Employees");
 
             migrationBuilder.DropTable(
                 name: "Companys");
+
+            migrationBuilder.DropTable(
+                name: "Role");
         }
     }
 }
