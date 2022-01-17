@@ -13,7 +13,8 @@ namespace LeaveTrack.Migrations
                 {
                     CompanyId = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    CompanyName = table.Column<string>(nullable: true)
+                    CompanyName = table.Column<string>(nullable: false),
+                    IsDeleted = table.Column<bool>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -26,11 +27,13 @@ namespace LeaveTrack.Migrations
                 {
                     EmployeeId = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    FirstName = table.Column<string>(nullable: true),
-                    LastName = table.Column<string>(nullable: true),
+                    FirstName = table.Column<string>(nullable: false),
+                    LastName = table.Column<string>(nullable: false),
                     DateOfBirth = table.Column<DateTime>(nullable: false),
-                    PhoneNumber = table.Column<string>(nullable: true),
-                    Role = table.Column<string>(nullable: true),
+                    Role = table.Column<string>(nullable: false),
+                    UserName = table.Column<string>(nullable: false),
+                    Password = table.Column<string>(nullable: false),
+                    IsDeleted = table.Column<bool>(nullable: false),
                     CompanyId = table.Column<int>(nullable: true)
                 },
                 constraints: table =>
@@ -45,27 +48,6 @@ namespace LeaveTrack.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Authentications",
-                columns: table => new
-                {
-                    Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    UserName = table.Column<string>(nullable: true),
-                    Password = table.Column<string>(nullable: true),
-                    EmployeeId = table.Column<int>(nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Authentications", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Authentications_Employees_EmployeeId",
-                        column: x => x.EmployeeId,
-                        principalTable: "Employees",
-                        principalColumn: "EmployeeId",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "LeaveReports",
                 columns: table => new
                 {
@@ -75,7 +57,9 @@ namespace LeaveTrack.Migrations
                     ToDate = table.Column<DateTime>(nullable: false),
                     ApproverId = table.Column<int>(nullable: false),
                     Reason = table.Column<string>(nullable: true),
-                    EmployeeId = table.Column<int>(nullable: true)
+                    Status = table.Column<int>(nullable: false),
+                    IsDeleted = table.Column<bool>(nullable: false),
+                    EmployeeId = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -85,7 +69,7 @@ namespace LeaveTrack.Migrations
                         column: x => x.EmployeeId,
                         principalTable: "Employees",
                         principalColumn: "EmployeeId",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -94,11 +78,12 @@ namespace LeaveTrack.Migrations
                 {
                     ProjectId = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    ProjectName = table.Column<string>(nullable: true),
+                    ProjectName = table.Column<string>(nullable: false),
                     StartOn = table.Column<DateTime>(nullable: true),
                     CompleteOn = table.Column<DateTime>(nullable: true),
-                    CompanyId = table.Column<int>(nullable: true),
-                    EmployeeId = table.Column<int>(nullable: true)
+                    IsDeleted = table.Column<bool>(nullable: false),
+                    CompanyId = table.Column<int>(nullable: false),
+                    EmployeeId = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -117,44 +102,10 @@ namespace LeaveTrack.Migrations
                         onDelete: ReferentialAction.Restrict);
                 });
 
-            migrationBuilder.CreateTable(
-                name: "LeaveApproval",
-                columns: table => new
-                {
-                    Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    ApproverId = table.Column<int>(nullable: false),
-                    Status = table.Column<bool>(nullable: false),
-                    Reason = table.Column<string>(nullable: true),
-                    LeaveReportId = table.Column<int>(nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_LeaveApproval", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_LeaveApproval_LeaveReports_LeaveReportId",
-                        column: x => x.LeaveReportId,
-                        principalTable: "LeaveReports",
-                        principalColumn: "LeaveReportId",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Authentications_EmployeeId",
-                table: "Authentications",
-                column: "EmployeeId",
-                unique: true,
-                filter: "[EmployeeId] IS NOT NULL");
-
             migrationBuilder.CreateIndex(
                 name: "IX_Employees_CompanyId",
                 table: "Employees",
                 column: "CompanyId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_LeaveApproval_LeaveReportId",
-                table: "LeaveApproval",
-                column: "LeaveReportId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_LeaveReports_EmployeeId",
@@ -175,16 +126,10 @@ namespace LeaveTrack.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Authentications");
-
-            migrationBuilder.DropTable(
-                name: "LeaveApproval");
+                name: "LeaveReports");
 
             migrationBuilder.DropTable(
                 name: "Projects");
-
-            migrationBuilder.DropTable(
-                name: "LeaveReports");
 
             migrationBuilder.DropTable(
                 name: "Employees");

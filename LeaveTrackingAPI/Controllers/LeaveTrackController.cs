@@ -55,24 +55,22 @@ namespace LeaveTrack.Controllers
         /// <response code="200">created Leave Request.</response>
         /// <response code="400">Request does not have the required values.</response>
         /// <response code="401">Access token is missing or invalid.</response>
-        /// <response code="404">Empoyee Id not found.</response>
+        /// <response code="403">Action not permitted.</response>
         [HttpPost("leaveRequest")]
-        [ProducesResponseType(typeof(OkResult), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(string), StatusCodes.Status401Unauthorized)]
-        [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
-        public IActionResult CreateLeaveRequest([FromBody][Required] LeaveReport leaveReport)
+        [ProducesResponseType(typeof(string), StatusCodes.Status403Forbidden)]
+        public IActionResult CreateLeaveRequest([FromBody][Required] LeaveRequest leaveReport)
         {
-            var validate = leaveManagementContext.Employees.FirstOrDefault(x => x.EmployeeId == leaveReport.EmployeeId);
-            if (validate != null)
-              {
-                 leaveManagementContext.LeaveReports.Add(leaveReport);
-                 leaveManagementContext.SaveChanges();
-              }
-            else
-              {
-                 return NotFound();
-              }           
+            try
+            {
+                leaveTrackManager.CreateLeaveRequest(leaveReport);
+            }
+            catch
+            {
+                return BadRequest();
+            }
             return Ok();
         }
     }

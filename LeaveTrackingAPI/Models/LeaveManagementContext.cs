@@ -1,8 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace LeaveTrack.Models
 {
@@ -14,9 +10,7 @@ namespace LeaveTrack.Models
         public DbSet<Company> Companys { get; set; }
         public DbSet<Employee> Employees { get; set; }
         public DbSet<Project> Projects { get; set; }
-        public DbSet<Authentication> Authentications { get; set; }
-        public DbSet<LeaveReport> LeaveReports { get; set; }
-        public DbSet<LeaveApproval> LeaveApproval { get; set; }
+        public DbSet<LeaveRequest> LeaveReports { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

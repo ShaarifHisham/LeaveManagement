@@ -1,4 +1,5 @@
 ﻿using LeaveTrack.Models;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System;
@@ -23,7 +24,7 @@ namespace LeaveTrack
 
         public string Authenticate(string username, string password)
         {
-            var credential = leaveManagementContext.Authentications.FirstOrDefault(x => x.UserName == username && x.Password == password);
+            var credential = leaveManagementContext.Employees.FirstOrDefault(x => x.UserName == username && x.Password == password && x.IsDeleted != true);
             if (credential != null)
             {
                 var tokenHandler = new JwtSecurityTokenHandler();
@@ -47,6 +48,17 @@ namespace LeaveTrack
             {
                 return null;
             }
+        }
+
+        public IActionResult CreateLeaveRequest(LeaveRequest leaveRequest)
+        {
+            var validate = leaveManagementContext.Employees.FirstOrDefault(x => x.EmployeeId == leaveRequest.EmployeeId);
+            if (validate != null)
+            {
+                leaveManagementContext.LeaveReports.Add(leaveRequest);
+                leaveManagementContext.SaveChanges();
+            }
+            return null;
         }
     }
 }
