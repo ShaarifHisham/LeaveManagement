@@ -3,11 +3,7 @@ using LeaveTrack.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace LeaveTrack.Controllers
 {
@@ -17,12 +13,10 @@ namespace LeaveTrack.Controllers
     public class LeaveTrackController : Controller
     {
         private readonly ILeaveTrackingManager leaveTrackManager;
-        private readonly LeaveManagementContext leaveManagementContext;
 
-        public LeaveTrackController(ILeaveTrackingManager leaveTrackManager, LeaveManagementContext leaveManagementContext)
+        public LeaveTrackController(ILeaveTrackingManager leaveTrackManager)
         {
             this.leaveTrackManager = leaveTrackManager;
-            this.leaveManagementContext = leaveManagementContext;
         }
 
         /// <summary>
@@ -61,7 +55,7 @@ namespace LeaveTrack.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(string), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(string), StatusCodes.Status403Forbidden)]
-        public IActionResult CreateLeaveRequest([FromBody][Required] LeaveRequest leaveReport)
+        public IActionResult CreateLeaveRequest([FromBody][Required] EmployeeLeaveRequest leaveReport)
         {
             try
             {

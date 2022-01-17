@@ -1,4 +1,5 @@
-﻿using LeaveTrack.Models;
+﻿using LeaveTrack.Model;
+using LeaveTrack.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
@@ -50,12 +51,20 @@ namespace LeaveTrack
             }
         }
 
-        public IActionResult CreateLeaveRequest(LeaveRequest leaveRequest)
+        public IActionResult CreateLeaveRequest(EmployeeLeaveRequest leaveRequest)
         {
-            var validate = leaveManagementContext.Employees.FirstOrDefault(x => x.EmployeeId == leaveRequest.EmployeeId);
+            var validate = leaveManagementContext.Employees.FirstOrDefault(x => x.EmployeeId == leaveRequest.EmployeeId && x.IsDeleted != true);
             if (validate != null)
             {
-                leaveManagementContext.LeaveReports.Add(leaveRequest);
+                var leave = new LeaveRequest
+                {
+                    EmployeeId = leaveRequest.EmployeeId,
+                    ApproverId = leaveRequest.ApproverId,
+                    FromDate = leaveRequest.FromDate,
+                    ToDate = leaveRequest.ToDate,
+                    Reason = leaveRequest.Reason ?? null
+                };
+                leaveManagementContext.LeaveReports.Add(leave);
                 leaveManagementContext.SaveChanges();
             }
             return null;
