@@ -9,7 +9,6 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace LeaveTrack
 {
@@ -66,6 +65,27 @@ namespace LeaveTrack
                 };
                 leaveManagementContext.LeaveReports.Add(leave);
                 leaveManagementContext.SaveChanges();
+            }
+            return null;
+        }
+
+        public IEnumerable<LeaveReportResponse> GetLeavesList(int managerId)
+        {
+            var leaveRequests = leaveManagementContext.LeaveReports.Where(x => x.ApproverId == managerId);
+            var leaveResponse = new List<LeaveReportResponse>();
+            if (leaveRequests.Any())
+            {
+                foreach (var leave in leaveRequests)
+                {
+                    leaveResponse.Add(new LeaveReportResponse()
+                    {
+                        EmployeeId = leave.EmployeeId,
+                        FromDate = leave.FromDate,
+                        ToDate = leave.ToDate,
+                        Reason = leave.Reason,
+                    });
+                }
+                return leaveResponse;
             }
             return null;
         }
