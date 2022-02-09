@@ -34,6 +34,7 @@ namespace LeaveTrack
                     Subject = new ClaimsIdentity(new Claim[]
                     {
                            new Claim(ClaimTypes.Name, username),
+                           new Claim("role","Manager")
                     }),
                     Expires = DateTime.UtcNow.AddMinutes(10),
                     SigningCredentials =

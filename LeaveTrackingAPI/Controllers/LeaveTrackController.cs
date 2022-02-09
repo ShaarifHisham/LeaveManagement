@@ -53,6 +53,7 @@ namespace LeaveTrack.Controllers
         /// <response code="404">Not found.</response>
         /// <response code="403">Action not permitted for specified API key.</response>
         /// <response code="401">Access token is missing or invalid.</response>
+        [Authorize(Roles = "Manager")]
         [HttpGet("leaveReport/{managerId}")]
         [ProducesResponseType(typeof(IEnumerable<LeaveReportResponse>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
